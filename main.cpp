@@ -5,11 +5,32 @@
 
 using namespace std;
 
+//define normal dist
+//double sigma, mu;
+//sigma=.05;
+//mu=.5;
+//(1/(sigma1*sqrt(2*pi)))*exp(-.5*((x - mu1)/sigma1).^2)
+
+
+//declare normal dist function
+void myFunction();
+void Normal(float sgrid[5]){
+    //double sprobs[5];
+    vector<double> sprobs; //need to set it up as a vector to be able to take the size
+    sprobs.assign(5,0);
+    int i;
+    for (i = 0; i < 5; ++i) {
+        sprobs[i] = sgrid[i]*12 + 1;
+    }
+    cout << "array is " << sprobs[4];
+    cout<<"size of sprobs is"<<sprobs.size();
+}
+
 int main()
 
 {
     //floats for initial conditions, parameters, etc.
-    float t0, tfinal, c0, cn, dt, k1, k2, k3, k4, k, sgrid, sprobs;
+    float t0, tfinal, c0, cn, dt, k1, k2, k3, k4, k, sprobs;
 
     //ints for iterations/number of steps:
     int i, n;
@@ -22,17 +43,7 @@ int main()
     //compute time step size dt:
     dt=(tfinal - t0)/n;
 
-    //define normal dist
-    double sigma, mu;
-    sigma=.05;
-    mu=.5;
-    //(1/(sigma1*sqrt(2*pi)))*exp(-.5*((x - mu1)/sigma1).^2)
-    double get_normal(sigma, mu, sgrid)
-    {
-        double normdist;
-        normdist=(1/(sigma*sqrt(2*pi)))*exp(-.5*((sgrid - mu)/sigma).^2);
-        return normdist;
-    }
+
 
     //define s stuff
     vector<vector<double>>all_time;
@@ -41,9 +52,9 @@ int main()
     //here comes big for loop
     for(int s = 0; s<12;++s)
     {
-        double sgrid, sprobs;
-        sgrid=s/12;
-        sprobs=get_normal(mu,sigma,sgrid);
+        double sprobs;
+        //sgrid=s/12;
+        //sprobs=get_normal(mu,sigma,sgrid);
 
     //initialize time and space vecs
     vector<double>run_time;
@@ -77,6 +88,14 @@ int main()
     //check size of run_time and run_space
     std::cout << "myvector stores " << int(all_space[3].size()) << " numbers.\n";
 
+    //now that we have the matrix, we can apply the distribution function to apply sprobs to svec
+    //once sprobs are calculated, can compute the weighted sum
+
+    float sgrid [5] = {0, .25, .5, .75, 1};
+Normal(sgrid);
+
+    //myFunction();  // call the function for normal dist
+
     return 0;
 
     //currently, this code takes in an inital and final t, as well as an initial c value
@@ -98,3 +117,19 @@ int main()
     //need to figure out figures
     //need to get normal dist over sgrid
 }
+
+// Function definition
+void myFunction() {
+    //this function needs to take in an array of s values, called sgrid, and apply normal dist.
+
+    cout << "I just got executed!";
+}
+
+
+
+//double get_normal(sigma, mu, sgrid)
+//{
+//    double normdist;
+//    normdist=(1/(sigma*sqrt(2*pi)))*exp(-.5*((sgrid - mu)/sigma).^2);
+//    return normdist;
+//}
