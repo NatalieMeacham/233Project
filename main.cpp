@@ -1,7 +1,8 @@
 #include<iostream>
 #include<vector>
+#include<cmath>
 //give ODE for solving
-#define f(t,c)  c*(1-c) - s*c
+#define f(t,c)  rho*c*(1-c) - d*s*c
 
 using namespace std;
 
@@ -11,16 +12,16 @@ using namespace std;
 //mu=.5;
 //(1/(sigma1*sqrt(2*pi)))*exp(-.5*((x - mu1)/sigma1).^2)
 
-
 //declare normal dist function
 void myFunction();
-void Normal(float sgrid[5]){
+void Normal(float sgrid[5], float sigma, float mu, float pi){
     //double sprobs[5];
     vector<double> sprobs; //need to set it up as a vector to be able to take the size
     sprobs.assign(5,0);
     int i;
     for (i = 0; i < 5; ++i) {
-        sprobs[i] = sgrid[i]*12 + 1;
+        //takes in sgrid and spits out normal equation as sprobs
+        sprobs[i] = (1/(sigma*sqrt(2*pi)))*exp(-.5*((sgrid[i] - mu)/sigma)*((sgrid[i] - mu)/sigma));
     }
     cout << "array is " << sprobs[4];
     cout<<"size of sprobs is"<<sprobs.size();
@@ -30,7 +31,7 @@ int main()
 
 {
     //floats for initial conditions, parameters, etc.
-    float t0, tfinal, c0, cn, dt, k1, k2, k3, k4, k, sprobs;
+    float t0, tfinal, c0, cn, dt, k1, k2, k3, k4, k, rho, d, mu, sigma, pi;
 
     //ints for iterations/number of steps:
     int i, n;
@@ -43,7 +44,14 @@ int main()
     //compute time step size dt:
     dt=(tfinal - t0)/n;
 
+    //parameters for ODE:
+    rho=1;
+    d=0.9;
 
+    //parameters for normal distribution:
+    mu=0.5;
+    sigma=0.05;
+    pi=3.14159;
 
     //define s stuff
     vector<vector<double>>all_time;
@@ -92,16 +100,11 @@ int main()
     //once sprobs are calculated, can compute the weighted sum
 
     float sgrid [5] = {0, .25, .5, .75, 1};
-Normal(sgrid);
+Normal(sgrid, sigma, mu, pi);
 
     //myFunction();  // call the function for normal dist
 
     return 0;
-
-    //currently, this code takes in an inital and final t, as well as an initial c value
-    //it spits out the final c value at the final t value
-
-    //next step: apply true ode from research problem
 
     //next step: keep track of the whole solution curve at each time step
     //so need to figure out how to initalize vector and stuff
@@ -115,7 +118,6 @@ Normal(sgrid);
     //notes to self 11/22
     //need to fully define sgrid
     //need to figure out figures
-    //need to get normal dist over sgrid
 }
 
 // Function definition
@@ -125,11 +127,3 @@ void myFunction() {
     cout << "I just got executed!";
 }
 
-
-
-//double get_normal(sigma, mu, sgrid)
-//{
-//    double normdist;
-//    normdist=(1/(sigma*sqrt(2*pi)))*exp(-.5*((sgrid - mu)/sigma).^2);
-//    return normdist;
-//}
