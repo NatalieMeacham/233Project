@@ -1,31 +1,59 @@
 #include<iostream>
 #include<vector>
 #include<cmath>
+#include<numeric>
 //give ODE for solving
 #define f(t,c)  rho*c*(1-c) - d*s*c
 
 using namespace std;
 
-//define normal dist
-//double sigma, mu;
-//sigma=.05;
-//mu=.5;
-//(1/(sigma1*sqrt(2*pi)))*exp(-.5*((x - mu1)/sigma1).^2)
-
 //declare normal dist function
 void myFunction();
-void Normal(float sgrid[5], float sigma, float mu, float pi){
-    //double sprobs[5];
+void Normal(vector<double> smesh, float sigma, float mu, float pi, double numpoints){
     vector<double> sprobs; //need to set it up as a vector to be able to take the size
-    sprobs.assign(5,0);
+    sprobs.assign(numpoints,0.);
     int i;
-    for (i = 0; i < 5; ++i) {
-        //takes in sgrid and spits out normal equation as sprobs
-        sprobs[i] = (1/(sigma*sqrt(2*pi)))*exp(-.5*((sgrid[i] - mu)/sigma)*((sgrid[i] - mu)/sigma));
+    double sprobssum = 0;
+    for (i = 0; i < numpoints; ++i) {
+        //takes in smesh and spits out normal equation as sprobs
+        sprobs[i] = (1/(sigma*sqrt(2*pi)))*exp(-.5*((smesh[i] - mu)/sigma)*((smesh[i] - mu)/sigma));
+        //cout<<"sprobs val here is "<<sprobs[i]<<endl;
+        sprobssum = sprobssum + sprobs[i];
     }
-    cout << "array is " << sprobs[4];
-    cout<<"size of sprobs is"<<sprobs.size();
+    cout<<"sprobssum is "<<sprobssum<<endl;
+    cout<<"Old sprobs[8] is "<<sprobs[8]<<endl;
+
+    //normalize probabilities with sprobs[i] = sprobs[i]/sum(sprobs)
+
+    double sprobsum2 = 0;
+    int j;
+    for (j = 0; j < numpoints; ++j) {
+        sprobs[j] = sprobs[j] / sprobssum;
+        //cout<<"sprobs val here is "<<sprobs[i]<<endl;
+        sprobsum2 = sprobsum2 + sprobs[j];
+    }
+    cout<<"sprobsum2 is "<<sprobsum2<<endl;
+    cout<<"New sprobs[8] is "<<sprobs[8]<<endl;
+    cout<<"Size of sprobs is "<<sprobs.size()<<endl;
+
 }
+
+//linspace function to get vector smesh with numpoints number of points between x1 and x2.
+vector<double> mylinspace(double x1, double x2, double numpoints){
+    vector<double> smesh;
+    double dgrid;
+    smesh.assign(numpoints,0);
+    int j;
+    dgrid = (x2 - x1)/numpoints;
+    for (j=0; j<numpoints; ++j){
+        smesh[j] = x1 + dgrid*j;
+    }
+    cout<< "Scalar dgrid is "<< dgrid<<endl;
+    cout<< "Smesh 3rd grid point is " <<smesh[3]<<endl;
+
+    return smesh;
+}
+
 
 int main()
 
@@ -53,27 +81,31 @@ int main()
     sigma=0.05;
     pi=3.14159;
 
-    //define s stuff
+    //define s stuff: time and space vectors?
     vector<vector<double>>all_time;
     vector<vector<double>>all_space;
 
-    //here comes big for loop
-    for(int s = 0; s<12;++s)
-    {
-        double sprobs;
-        //sgrid=s/12;
-        //sprobs=get_normal(mu,sigma,sgrid);
+    //define smesh (same thing as xgrid, different name in case it goes wrong)
+    double numpoints, x1, x2;
+    x1=0;
+    x2=1;
+    numpoints = 10;
 
+    vector<double> smesh = mylinspace(x1, x2, numpoints); //create smesh
+
+    //here comes big for loop over the number of s values
+    for(int s = 0; s<numpoints;++s) //here we are looping over number of s values
+    {
     //initialize time and space vecs
     vector<double>run_time;
     vector<double>run_space;
 
-    //push back=append
+    //push back=append, apply to t0 and c0
     run_time.push_back(t0);
     run_space.push_back(c0);
 
     //RK method
-    for (i=0; i<n; i++)
+    for (i=0; i<n; i++) //here we are looping over time for set s value
     {
         k1=dt*(f(t0,c0));
         k2=dt*(f((t0 + dt/2), (c0 + k1/2)));
@@ -94,15 +126,18 @@ int main()
     //cout<<"\nValue of c at t=" <<tfinal <<" is " <<cn;
 
     //check size of run_time and run_space
-    std::cout << "myvector stores " << int(all_space[3].size()) << " numbers.\n";
 
-    //now that we have the matrix, we can apply the distribution function to apply sprobs to svec
+    //how many entries are in 3rd row of all_space, aka how many time steps in solution for 3rd s value?
+    std::cout << "myvector for space stores " << int(all_space[3].size()) << " numbers.\n";
+    //std::cout << "myvector for time stores " << int(all_time[3].size()) << " numbers.\n";
+
+
+
+
     //once sprobs are calculated, can compute the weighted sum
+    //need to extract rows of the matrix and then apply weights
 
-    float sgrid [5] = {0, .25, .5, .75, 1};
-Normal(sgrid, sigma, mu, pi);
-
-    //myFunction();  // call the function for normal dist
+    Normal(smesh, sigma, mu, pi, numpoints); //apply normal distribution to smesh to get sprobs
 
     return 0;
 
@@ -121,9 +156,9 @@ Normal(sgrid, sigma, mu, pi);
 }
 
 // Function definition
-void myFunction() {
+//void myFunction() {
     //this function needs to take in an array of s values, called sgrid, and apply normal dist.
 
-    cout << "I just got executed!";
-}
+   // cout << "I just got executed!";
+//}
 
