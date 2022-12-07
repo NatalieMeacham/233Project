@@ -10,7 +10,7 @@ using namespace std;
 
 //declare normal dist function
 void myFunction();
-void Normal(vector<double> smesh, float sigma, float mu, float pi, double numpoints){
+vector<double> Normal(vector<double> smesh, float sigma, float mu, float pi, double numpoints){
     vector<double> sprobs; //need to set it up as a vector to be able to take the size
     sprobs.assign(numpoints,0.);
     int i;
@@ -43,6 +43,8 @@ void Normal(vector<double> smesh, float sigma, float mu, float pi, double numpoi
     cout<<"sprobsum2 is "<<sprobsum2<<endl;
     cout<<"New sprobs[8] is "<<sprobs[8]<<endl;
     cout<<"Size of sprobs is "<<sprobs.size()<<endl;
+
+    return sprobs;
 
 }
 
@@ -207,17 +209,37 @@ ofstream outSolTime("MatSolTime.csv");
 
     //once sprobs are calculated, can compute the weighted sum
     //need to extract rows of the matrix and then apply weights
+vector<double> norm;
+norm=Normal(smesh, sigma, mu, pi, numpoints); //apply normal distribution to smesh to get sprobs
 
-    Normal(smesh, sigma, mu, pi, numpoints); //apply normal distribution to smesh to get sprobs
+    //initialize vector to hold final weighted solution
+    vector<double> sumsol;
+    sumsol.assign(n,0.);
 
-    //try to get sample file to save to text file
-    ofstream mynewfile;
-    mynewfile.open ("hereisexample.txt");
-    mynewfile << "Here is some sample text.\n";
-    mynewfile.close();
+    ofstream SumSol("SumSolFile.csv");
+
+    for(int i =0; i < n; i++) {
+
+        for (int s = 0; s < numpoints; ++s) //here we are looping over number of s values
+        {
+            sumsol[i] = sumsol[i] + all_space[s][i] * norm[s];
+
+
+        }
+
+        SumSol<< sumsol[i]<<'\n';
+    }
+
+
+
+        //try to get sample file to save to text file
+    //ofstream mynewfile;
+    //mynewfile.open ("hereisexample.txt");
+    //mynewfile << "Here is some sample text.\n";
+    //mynewfile.close();
     return 0;
 
-    return 0;
+    //return 0;
 
     //next step: keep track of the whole solution curve at each time step
     //so need to figure out how to initalize vector and stuff
