@@ -3,6 +3,9 @@
 #include<cmath>
 #include<numeric>
 #include<fstream>
+#include<stdio.h>
+#include<chrono>
+
 //give ODE for solving
 #define f(t,c,s)  rho*c*(1-c) - d*s*c //included s to change its value in for loop later
 
@@ -69,6 +72,9 @@ vector<double> mylinspace(double x1, double x2, double numpoints){
 int main()
 
 {
+    //start timing
+    auto begin = std::chrono::high_resolution_clock::now();
+
     //floats for initial conditions, parameters, etc.
     float t0, tfinal, c0, cn, dt, k1, k2, k3, k4, k, rho, d, mu, sigma, pi;
 
@@ -237,6 +243,12 @@ norm=Normal(smesh, sigma, mu, pi, numpoints); //apply normal distribution to sme
     //mynewfile.open ("hereisexample.txt");
     //mynewfile << "Here is some sample text.\n";
     //mynewfile.close();
+
+    //finish timing (seconds)
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+    printf("Time measured: %.3f seconds.\n", elapsed.count() * 1e-9);
+
     return 0;
 
     //return 0;
