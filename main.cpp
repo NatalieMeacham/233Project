@@ -83,8 +83,8 @@ int main()
 
     t0=0; //initial time
     tfinal=5; //final time
-    c0=1; //initial condition
-    n=5; //number of time steps
+    c0=.5; //initial condition. Note this is defined in two places due to changes in for loops.
+    n=25; //number of time steps
 
     //compute time step size dt:
     //dt=(tfinal - t0)/n;
@@ -127,7 +127,7 @@ int main()
     vector<double>run_space;
 
         t0 = 0;
-        c0 = 1;
+        c0 = .5;
 
 //    //push back=append, apply to t0 and c0
 //    run_time.push_back(t0);
@@ -201,9 +201,7 @@ ofstream outSolTime("MatSolTime.csv");
         outSolTime << '\n';
     }
 
-    //cout<<"\nValue of c at t=" <<tfinal <<" is " <<cn;
 
-    //check size of run_time and run_space
 
     //how many entries are in 3rd row of all_space, aka how many time steps in solution for 3rd s value?
     std::cout << "myvector for space stores " << int(all_space[3].size()) << " numbers.\n";
@@ -253,12 +251,6 @@ norm=Normal(smesh, sigma, mu, pi, numpoints); //apply normal distribution to sme
 
     //return 0;
 
-    //next step: keep track of the whole solution curve at each time step
-    //so need to figure out how to initalize vector and stuff
-
-    //after that, need to loop over vector of sprobs and generate matrix of values
-
-    //after that, need to choose a few different distributions to apply
 
     //after that, need to figure out how to time code in clion and in matlab
 
